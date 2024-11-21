@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connected Dashboard | IoT System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>IoT Watering System - Connected</h1>
+        
+        <div class="status">
+            <p><strong>Device Status:</strong> <span id="deviceStatus">Connected</span></p>
+            <p><strong>Current Mode:</strong> <span id="currentMode">Automatic</span></p>
+        </div>
+
+        <div class="controls">
+            <button id="manualModeBtn" class="btn">Manual Mode</button>
+            <button id="autoModeBtn" class="btn">Automatic Mode</button>
+        </div>
+
+        <div class="extra-options">
+            <button id="statsBtn" class="btn">View Moisture Statistics</button>
+            <button id="historyBtn" class="btn">Access Device History</button>
+        </div>
+
+        <div id="footer">
+            <button id="disconnectBtn" class="btn">Disconnect Device</button>
+        </div>
+    </div>
+
+    <script>
+        // Event listeners for buttons
+        document.getElementById('manualModeBtn').addEventListener('click', () => {
+            window.location.href = '/manual.html'; // Redirect to Manual Mode
+        });
+
+        document.getElementById('autoModeBtn').addEventListener('click', () => {
+            window.location.href = '/auto.html'; // Redirect to Auto Mode
+        });
+
+        document.getElementById('statsBtn').addEventListener('click', () => {
+            window.location.href = '/statistics.html'; // Redirect to Statistics Page
+        });
+
+        document.getElementById('historyBtn').addEventListener('click', () => {
+            window.location.href = '/history.html'; // Redirect to History Page
+        });
+
+        document.getElementById('disconnectBtn').addEventListener('click', () => {
+            alert("Device disconnected successfully!");
+            window.location.href = '/dashboard.html'; // Redirect to initial dashboard
+        });
+    </script>
+</body>
+</html>
