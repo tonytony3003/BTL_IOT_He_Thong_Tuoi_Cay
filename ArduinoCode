@@ -1,0 +1,109 @@
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+
+// Wi-Fi credentials
+const char* ssid = "Khanh";
+const char* password = "66668888";
+
+// GPIO pin definitions
+const int pumpPin = D2;        // Pump control pin
+const int redLedPin = D8;      // Red LED pin
+const int yellowLedPin = D7;   // Yellow LED pin
+const int greenLedPin = D6;    // Green LED pin
+const int soilMoisturePin = A0; // Soil moisture sensor pin
+
+// Threshold values
+int lowerThreshold = 300;  // Lower threshold
+int upperThreshold = 700;  // Upper threshold
+
+// System state
+bool isManualMode = false; // Manual or automatic mode
+bool pumpState = false;    // Pump state (on/off)
+
+// Server configuration
+const char* serverUrl = "http://198.160.10.109/api/update"; // 
+
+void setup() {
+  Serial.begin(115200);
+
+  // Connect to Wi-Fi
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to Wi-Fi...");
+  }
+  Serial.println("Connected to Wi-Fi");
+
+  // Initialize GPIO pins
+  pinMode(pumpPin, OUTPUT);
+  pinMode(redLedPin, OUTPUT);
+  pinMode(yellowLedPin, OUTPUT);
+  pinMode(greenLedPin, OUTPUT);
+
+  // Turn off pump and LEDs initially
+  digitalWrite(pumpPin, LOW);
+  digitalWrite(redLedPin, LOW);
+  digitalWrite(yellowLedPin, LOW);
+  digitalWrite(greenLedPin, LOW);
+}
+
+void loop() {
+  // Read soil moisture value
+  int soilMoistureValue = analogRead(soilMoisturePin);
+  Serial.print("Soil Moisture: ");
+  Serial.println(soilMoistureValue);
+
+  // Update system state in automatic mode
+  if (!isManualMode) {
+    if (soilMoistureValue < lowerThreshold) {
+      // Below lower threshold: Turn on pump, red LED
+      digitalWrite(pumpPin, HIGH);
+      digitalWrite(redLedPin, HIGH);
+      digitalWrite(yellowLedPin, LOW);
+      digitalWrite(greenLedPin, LOW);
+    } else if (soilMoistureValue > upperThreshold) {
+      // Above upper threshold: Turn off pump, yellow LED
+      digitalWrite(pumpPin, LOW);
+      digitalWrite(redLedPin, LOW);
+      digitalWrite(yellowLedPin, HIGH);
+      digitalWrite(greenLedPin, LOW);
+    } else {
+      // Within range: Turn off pump, green LED
+      digitalWrite(pumpPin, LOW);
+      digitalWrite(redLedPin, LOW);
+      digitalWrite(yellowLedPin, LOW);
+      digitalWrite(greenLedPin, HIGH);
+    }
+  }
+
+  // Send data to the server
+  sendDataToServer(soilMoistureValue, pumpState);
+
+  delay(2000); // Wait for 2 seconds before the next cycle
+}
+
+// Function to send data to the server
+void sendDataToServer(int soilMoisture, bool pumpStatus) {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin(serverUrl);
+    http.addHeader("Content-Type", "application/json");
+
+    // Create JSON payload
+    String jsonPayload = "{\"soilMoisture\":" + String(soilMoisture) + 
+                         ", \"pumpStatus\":" + String(pumpStatus ? "true" : "false") + "}";
+
+    // Send POST request
+    int httpResponseCode = http.POST(jsonPayload);
+    if (httpResponseCode > 0) {
+      String response = http.getString();
+      Serial.println("Server response: " + response);
+    } else {
+      Serial.println("Error sending data to server");
+    }
+
+    http.end();
+  } else {
+    Serial.println("Wi-Fi disconnected");
+  }
+}
