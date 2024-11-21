@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Mode | IoT System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Automatic Watering Mode</h1>
+        <p>Soil Moisture: <span id="soilMoisture"></span>458</p>
+        <p>Pump Status: <span id="pumpStatus">OFF</span></p>
+        <p>Lower Threshold: <input id="lowerThreshold" type="number" value="300"></p>
+        <p>Upper Threshold: <input id="upperThreshold" type="number" value="1000"></p>
+        <button id="updateThresholdsBtn">Update Thresholds</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
