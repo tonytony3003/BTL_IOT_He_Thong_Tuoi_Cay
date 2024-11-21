@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soil Moisture Statistics</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Soil Moisture Statistics</h1>
+    <canvas id="moistureChart" width="400" height="200"></canvas>
+    <button onclick="goBack()">Back to Dashboard</button>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Sample data: Replace this with data fetched from the backend
+    const soilMoistureData = {
+      labels: ["2024-11-20 10:00", "2024-11-20 11:00", "2024-11-20 12:00", "2024-11-20 13:00"], // Time
+      datasets: [{
+        label: "Soil Moisture (%)",
+        data: [35, 45, 50, 40], // Moisture values
+        backgroundColor: "rgba(54, 162, 235, 0.2)",
+        borderColor: "rgba(54, 162, 235, 1)",
+        borderWidth: 1
+      }]
+    };
+
+    // Configuration for the chart
+    const config = {
+      type: 'line',
+      data: soilMoistureData,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: 'Soil Moisture Over Time'
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Time'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Moisture (%)'
+            },
+            beginAtZero: true
+          }
+        }
+      }
+    };
+
+    // Render the chart
+    const ctx = document.getElementById('moistureChart').getContext('2d');
+    new Chart(ctx, config);
+
+    // Go back to dashboard
+    function goBack() {
+      window.location.href = "/dashboard.html";
+    }
+  </script>
+</body>
+</html>
